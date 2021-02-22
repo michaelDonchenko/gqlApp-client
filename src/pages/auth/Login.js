@@ -6,6 +6,8 @@ import Alerts from '../../components/Alerts'
 import Spinner from '../../components/Spinner'
 import { auth, googleAuthProvider } from '../../firebase'
 import { Link } from 'react-router-dom'
+import { useMutation } from '@apollo/client'
+import { USER_CREATE_OR_UPDATE } from '../../graphql/mutations'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,14 +52,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   googleButton: {
-    backgroundColor: '#fff59d',
+    backgroundColor: '#ffcc80',
     color: 'black',
     width: '90%',
     margin: '15px 0',
     border: '1px solid',
     borderRadius: '9999em',
     '&:hover': {
-      backgroundColor: '#fff59d',
+      backgroundColor: '#ffcc80',
       color: 'black',
       width: '90%',
     },
@@ -72,14 +74,15 @@ const Login = ({ history }) => {
   const classes = useStyles()
   const { dispatch, state: contextState } = useContext(AuthContext)
   const { user } = contextState
+  const [userCreateOrUpdate] = useMutation(USER_CREATE_OR_UPDATE)
 
   if (user) {
-    history.push('/')
+    history.push('/profile')
   }
 
   const [state, setState] = useState({
-    email: '',
-    password: '',
+    email: 'michael1994d@gmail.com',
+    password: 'Mr100michael',
     loading: '',
     error: '',
   })
@@ -115,6 +118,17 @@ const Login = ({ history }) => {
         type: 'LOGGED_IN_USER',
         payload: { email: user.email, token: idTokenResult.token },
       })
+
+      //save to local storage
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          email: user.email,
+          token: idTokenResult.token,
+        })
+      )
+
+      await userCreateOrUpdate()
     } catch (error) {
       setState({ ...state, loading: false, error: error.message })
     }
@@ -133,6 +147,17 @@ const Login = ({ history }) => {
         type: 'LOGGED_IN_USER',
         payload: { email: user.email, token: idTokenResult.token },
       })
+
+      //save to local storage
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          email: user.email,
+          token: idTokenResult.token,
+        })
+      )
+
+      await userCreateOrUpdate()
     } catch (error) {
       setState({ ...state, loading: false, error: error.message })
     }

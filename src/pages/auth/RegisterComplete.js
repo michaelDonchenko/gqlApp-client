@@ -4,6 +4,16 @@ import Alerts from '../../components/Alerts'
 import Spinner from '../../components/Spinner'
 import { auth } from '../../firebase'
 import { AuthContext } from '../../context/authContext'
+import { useMutation, gql } from '@apollo/client'
+
+const USER_CREATE_OR_UPDATE = gql`
+  mutation {
+    userCreateOrUpdate {
+      username
+      email
+    }
+  }
+`
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,8 +67,10 @@ const RegisterComplete = ({ history }) => {
   const { dispatch, state: contextState } = useContext(AuthContext)
   const { user } = contextState
 
+  const [userCreateOrUpdate] = useMutation(USER_CREATE_OR_UPDATE)
+
   if (user) {
-    history.push('/')
+    history.push('/profile')
   }
 
   const [state, setState] = useState({
@@ -112,12 +124,23 @@ const RegisterComplete = ({ history }) => {
 
         //user in context
         //dispatch user with token and email
-        //then redirect
 
         dispatch({
           type: 'LOGGED_IN_USER',
           payload: { email: user.email, token: idTokenResult.token },
         })
+
+        //save to local storage
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            email: user.email,
+            token: idTokenResult.token,
+          })
+        )
+
+        //make api request to save the user to our db
+        await userCreateOrUpdate()
       }
     } catch (error) {
       setState({ ...state, loading: false, error: error.message })

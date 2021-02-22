@@ -13,7 +13,9 @@ const firebaseReducer = (state, action) => {
 
 //state
 const initialState = {
-  user: null,
+  user: localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user'))
+    : null,
 }
 
 //create context
@@ -32,6 +34,15 @@ const AuthProvider = ({ children }) => {
           type: 'LOGGED_IN_USER',
           payload: { email: user.email, token: idTokenResult.token },
         })
+
+        //save to local storage
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            email: user.email,
+            token: idTokenResult.token,
+          })
+        )
       } else {
         dispatch({
           type: 'LOGGED_IN_USER',

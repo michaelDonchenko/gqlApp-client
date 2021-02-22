@@ -3,7 +3,8 @@ import { AppBar, Button, Toolbar } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 import { NavLink } from 'react-router-dom'
 import { AuthContext } from '../context/authContext'
-import { auth } from '../firebase'
+import UserMenu from './user/UserMenu'
+import MenuIcon from '@material-ui/icons/Menu'
 
 const useStyles = makeStyles({
   root: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles({
   },
   navButton: {
     color: 'black',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   mainButton: {
     color: 'black',
@@ -35,16 +36,17 @@ const useStyles = makeStyles({
 
 const NavBar = () => {
   const classes = useStyles()
-
-  const { dispatch, state } = useContext(AuthContext)
+  const { state } = useContext(AuthContext)
   const { user } = state
 
-  const handleLogout = async () => {
-    await auth.signOut()
-    dispatch({
-      type: 'LOGGED_IN_USER',
-      payload: null,
-    })
+  const [menu, setMenu] = React.useState(null)
+
+  const handleClick = (event) => {
+    setMenu(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setMenu(null)
   }
 
   return (
@@ -56,9 +58,18 @@ const NavBar = () => {
         <div style={{ flexGrow: 1 }}></div>
 
         {user ? (
-          <Button onClick={handleLogout} className={classes.navButton}>
-            Logout
-          </Button>
+          <>
+            <Button
+              className={classes.navButton}
+              aria-controls='userMenu'
+              aria-haspopup='true'
+              onClick={handleClick}
+              startIcon={<MenuIcon style={{ fontSize: '1.5rem' }} />}
+            >
+              <span>User Menu</span>
+            </Button>
+            <UserMenu menu={menu} handleClose={handleClose} />
+          </>
         ) : (
           <>
             <NavLink className={classes.navLink} to='/login'>

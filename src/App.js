@@ -1,5 +1,10 @@
 import React, { useContext } from 'react'
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink,
+} from '@apollo/client'
 import { Switch, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import NavBar from './components/NavBar'
@@ -9,11 +14,10 @@ import background from './images/background01.jpg'
 import { makeStyles } from '@material-ui/core'
 import RegisterComplete from './pages/auth/RegisterComplete'
 import ForgotPassword from './pages/auth/ForgotPassword'
-
-const client = new ApolloClient({
-  uri: process.env.REACT_APP_GQL_ENDPOINT,
-  cache: new InMemoryCache(),
-})
+import { AuthContext } from './context/authContext'
+import { setContext } from '@apollo/client/link/context'
+import PrivateRoute from './components/routes/PrivateRoute'
+import UserProfile from './pages/user/UserProfile'
 
 const useStyles = makeStyles({
   root: {
@@ -24,6 +28,26 @@ const useStyles = makeStyles({
 
 const App = () => {
   const classes = useStyles()
+  const { state } = useContext(AuthContext)
+  const { user } = state
+
+  const httpLink = createHttpLink({
+    uri: process.env.REACT_APP_GQL_ENDPOINT,
+  })
+
+  const authLink = setContext(() => {
+    return {
+      headers: {
+        authtoken: user ? user.token : '',
+      },
+    }
+  })
+
+  const client = new ApolloClient({
+    uri: process.env.REACT_APP_GQL_ENDPOINT,
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+  })
 
   return (
     <ApolloProvider client={client}>
@@ -39,6 +63,7 @@ const App = () => {
             component={RegisterComplete}
           />
           <Route path='/forgot-password' exact component={ForgotPassword} />
+          <PrivateRoute path='/profile' exact component={UserProfile} />
         </Switch>
       </main>
     </ApolloProvider>

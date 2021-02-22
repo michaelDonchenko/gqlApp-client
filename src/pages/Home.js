@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useQuery, gql, useLazyQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 import { Button } from '@material-ui/core'
 import { AuthContext } from '../context/authContext'
 
@@ -22,20 +22,10 @@ const Home = () => {
 
   const { state, dispatch } = useContext(AuthContext)
 
-  const changeUser = () => {
-    dispatch({
-      type: 'LOGGEN_IN_USER',
-      payload: 'Updated user name',
-    })
-  }
-
   return (
     <div>
       <Button variant='contained' color='primary' onClick={fetchPosts}>
         Fetch Posts
-      </Button>
-      <Button variant='contained' color='primary' onClick={changeUser}>
-        Change user name
       </Button>
     </div>
   )

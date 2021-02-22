@@ -3,7 +3,7 @@ import React from 'react'
 
 const Spinner = () => {
   return (
-    <div style={{ margin: '10px 0' }}>
+    <div style={{ margin: '15px 0', textAlign: 'center' }}>
       <CircularProgress />
     </div>
   )

@@ -118,7 +118,7 @@ const ForgotPassword = ({ history }) => {
   return (
     <div className={classes.root}>
       <div className={classes.formBlock}>
-        <h1>Password Reset</h1>
+        <h1>Forgot Password</h1>
         <div>
           <p className={classes.helperText}>
             Password reset link will be sent to your mailbox. {<br></br>}{' '}
