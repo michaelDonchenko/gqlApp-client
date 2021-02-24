@@ -18,6 +18,7 @@ import { AuthContext } from './context/authContext'
 import { setContext } from '@apollo/client/link/context'
 import PrivateRoute from './components/routes/PrivateRoute'
 import UserProfile from './pages/user/UserProfile'
+import PublicProfile from './pages/user/PublicProfile'
 
 const useStyles = makeStyles({
   root: {
@@ -64,6 +65,7 @@ const App = () => {
           />
           <Route path='/forgot-password' exact component={ForgotPassword} />
           <PrivateRoute path='/profile' exact component={UserProfile} />
+          <Route path='/user/:email' exact component={PublicProfile} />
         </Switch>
       </main>
     </ApolloProvider>

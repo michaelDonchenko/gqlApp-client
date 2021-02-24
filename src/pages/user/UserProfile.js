@@ -32,8 +32,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     textAlign: 'center',
     flexDirection: 'column',
-    [theme.breakpoints.down('xs')]: { width: '90%' },
-    [theme.breakpoints.up('sm')]: { width: '1280px', maxWidth: '90%' },
+    [theme.breakpoints.down('sm')]: { width: '95%' },
+    [theme.breakpoints.up('md')]: { width: '1280px', maxWidth: '90%' },
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     minHeight: '400px',
     border: '2px solid',
@@ -102,6 +102,8 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid',
     [theme.breakpoints.down('xs')]: { maxWidth: '80%', heading: '200px' },
     [theme.breakpoints.up('sm')]: { maxWidth: '100%', height: '350px' },
+    boxShadow:
+      'rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px',
   },
 
   accordionStyle: {
@@ -141,6 +143,7 @@ const UserProfile = () => {
   const classes = useStyles()
   const [state, setState] = useState({
     username: '',
+    email: '',
     password: '',
     passwordConfirm: '',
     passwordLoading: '',
@@ -165,6 +168,7 @@ const UserProfile = () => {
 
   const {
     username,
+    email,
     about,
     error,
     images,
@@ -201,6 +205,7 @@ const UserProfile = () => {
       setState({
         username: data.userDetails.username,
         about: data.userDetails.about,
+        email: data.userDetails.email,
         images: data.userDetails.images,
       })
     }
@@ -475,9 +480,9 @@ const UserProfile = () => {
                   <h3>User Details</h3>
                 </AccordionSummary>
                 <AccordionDetails className={classes.accordionDetails}>
-                  <p>User name: {data && data.userDetails.username}</p>
-                  <p>User email: {data && data.userDetails.email}</p>
-                  <p>About: {data && data.userDetails.about}</p>
+                  <p>User name: {username && username}</p>
+                  <p>User email: {email && email}</p>
+                  <p>About: {about && about}</p>
                 </AccordionDetails>
               </Accordion>
 
@@ -555,8 +560,7 @@ const UserProfile = () => {
                 {userError && (
                   <Alerts
                     type={'error'}
-                    variable={userError}
-                    close={() => setState({ ...state, userError: '' })}
+                    variable={'Error, please try again'}
                     textColor={'black'}
                   />
                 )}
